@@ -7,12 +7,39 @@
   <title>ODSC London - workshop introduction D3</title>
   <meta name="description" content="ODSC London - workshop introduction D3">
   <meta name="author" content="TULP interactive">
-  <script src="js/d3.min.js" lang="Javascript"></script>
+  
+  <style>
+    .my-text {
+      fill: red;
+    }
+  </style>
 </head>
 
 <body>
+  <script src="js/d3.min.js" lang="Javascript"></script>
+  <!-- SVG can be created just like HTML tags, but for visualization you usually use Javascript to create and manipulate SVG elements -->
+  <svg width="200" height="200">
+    <text x="50" y="100">Hello there</text>
+  </svg>
+
+  <!-- using CSS you can change the appearance. Inline styles work, but also separate style definitions in a CSS file or style section in the head of the page.
+  Some styles are the same as in HTML, such as font-size, but some are SVG specific, such as fill -->
+  <svg width="200" height="200">
+    <text x="50" y="100" class="my-text" style="font-size: 24px; font-family: Arial">Hello there</text>
+  </svg>
+
+  <svg width="800" height="800" id="main">
+
+  </svg>
+
   <script lang="Javascript">
     console.log('yes, it\'s working')
+
+    console.log(d3.select('#main').node())
+    console.log(d3.selectAll('svg'))
+
+    var svg = d3.select('#main')
+    var circle = svg.append('circle')
   </script>
 </body>
 </html>
