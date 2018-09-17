@@ -1,0 +1,151 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ODSC London - workshop introduction D3</title>
+  <meta name="description" content="ODSC London - workshop introduction D3">
+  <meta name="author" content="TULP interactive">
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <button class="update">update</button>
+  <script src="js/d3.min.js" lang="Javascript"></script>
+  <script lang="Javascript">
+    var margin = {
+      left: 50,
+      right: 50,
+      top: 50,
+      bottom: 50
+    }
+    var width = 800 - margin.left - margin.right
+    var height = 400 - margin.top - margin.bottom
+
+    function generateData() {
+      var multiplier = Math.random() * 10
+      return d3.range(3)
+        .map(function(d) { return d3.range(10)
+          .map(function(d, i) { return Math.random() * multiplier })})
+    }
+
+    var data = generateData()
+    
+    var svg = d3.select('body').append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+      .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
+
+    var x = d3.scaleLinear()
+      .domain([0, data[0].length])
+      .range([0, width])
+
+    function getYDomainExtent(data) {
+      return d3.extent(data
+        .reduce(function(acc, curr, prev) {
+          return acc.concat(curr)}, []))
+    }
+
+    var y = d3.scaleLinear()
+      .domain(getYDomainExtent(data))
+      .range([height, 0])
+
+    var c = d3.scaleOrdinal()
+      .range(d3.schemeCategory10)
+
+    var line = d3.line()
+      .x(function(d, i) { return x(i) })
+      .y(function(d) { return y(d) })
+      .curve(d3.curveLinear)
+
+    var xAxis = d3.axisBottom()
+        .scale(x)
+
+    svg.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', 'translate(0, ' + (height + 20) + ')')
+      .call(xAxis)
+
+    var yAxis = d3.axisLeft()
+      .scale(y)
+
+    svg.append('g')
+      .attr('class', 'y axis')
+      .attr('transform', 'translate(-20, 0)')
+      .call(yAxis)
+
+    function render() {
+      var result = svg.selectAll('.result')
+        .data(data)
+
+      var resultEnter = result.enter().append('g')
+        .attr('class', 'result')
+
+      resultEnter.append('path')
+        .style('fill', 'none')
+        .style('stroke', function(d, i) { return c(i) })
+        .style('stroke-dasharray', function(d, i) { return (i * 2) + ' ' + (i) })
+        .style('stroke-width', 3)
+        
+      var resultMerge = resultEnter.merge(result)
+      
+      resultMerge.select('path')
+        .transition(t)
+          .duration(800)
+          .delay(function(d, i) { return i * 50 })
+          .attr('d', line)
+
+      resultMerge.each(function(result, i) {
+        var mark = d3.select(this).selectAll('.mark')
+          .data(function(d) { return d }, function(d, i) { return i})
+
+        mark.transition()
+          .duration(800)
+          .attr('cx', function(d, i) { return x(i) })
+          .attr('cy', function(d) { return y(d) })
+
+        var markEnter = mark.enter().append('circle')
+          .attr('class', 'mark')
+          .attr('r', 0)
+          .style('stroke', c(i))
+          .style('fill', 'white')
+          .style('stroke-width', 3)
+          .attr('cx', function(d, i) { return x(i) })
+          .attr('cy', function(d) { return y(d) })
+          .transition()
+            .duration(800)
+            .delay(function(d, i) { return i * 100 })
+            .attr('r', 5)
+
+        // markEnter.merge(mark)
+        //   .transition()
+        //     .duration(800)
+        //     .delay(i * 50)
+      })
+      
+
+      var t = d3.transition()
+        .duration(800)
+
+      d3.select('.y')
+        .transition(t)
+        .call(yAxis)
+    }
+
+    render()
+
+    var button = d3.select('.update')
+      .on('click', function() {
+        data = generateData()
+
+        y.domain(getYDomainExtent(data))
+        yAxis.scale(y)
+
+        render()
+      })
+  </script>
+</body>
+</html>

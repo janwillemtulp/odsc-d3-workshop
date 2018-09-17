@@ -75,7 +75,29 @@ scaleOrdinal()
   .domain()
   .range()
 ```
+```javascript
+x.ticks(10)
+```
 * `category10()`
+
+# Axes
+```javascript
+var xAxis = d3.svg.axis()
+  .scale(x)
+  .orient('left')
+
+svg.append('g')
+  .attr('class', 'y axis')
+  .call(yAxis)
+```
+
+```css
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+```
 
 * explain interpolators:
   * min and max
@@ -177,7 +199,12 @@ pie()(data)
   .sort() // sorts the pies on some criteria
   .sortValues() // sorts the values
 ```
-  * explain `area()`
+```javascript
+area()
+  .x()
+  .y0()
+  .y1()
+```
 
 # EXERCISE: build your own
 
