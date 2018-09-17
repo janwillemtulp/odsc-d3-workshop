@@ -1,0 +1,24 @@
+{
+  "people": [
+    {
+      "name": "John",
+      "height": 1.87,
+      "age": 23
+    },
+    {
+      "name": "Peter",
+      "height": 1.78,
+      "age": 43
+    },
+    {
+      "name": "Maria",
+      "height": 1.72,
+      "age": 36
+    },
+    {
+      "name": "Rachel",
+      "height": 1.66,
+      "age": 51
+    }
+  ]
+}
