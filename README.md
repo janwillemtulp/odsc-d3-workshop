@@ -6,7 +6,7 @@
   - otherwise download the zipfile and unzip the file
 - open a command line window
 - cd into the unzipped folder
-- run `python -m SimpleHTTPServer`
+- run `python -m SimpleHTTPServer &`
 - open a browser and navigate to: `http://localhost:8000`
 - open the developer console via the menu. You should see the message: "yes, it's working"
 
