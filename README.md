@@ -16,14 +16,14 @@ This is the starting point for the workshop. The final file, which has all comme
 
 # Resources
 ## Official D3 resources
-* (D3 website)[https://d3js.org/]
-* (D3 Wiki)[https://github.com/d3/d3/wiki]
-* (D3 API reference)[https://github.com/d3/d3/blob/master/API.md]
-* (D3 examples)[https://github.com/d3/d3/wiki/Gallery]
+* [D3 website](https://d3js.org/)
+* [D3 Wiki](https://github.com/d3/d3/wiki)
+* [D3 API reference](https://github.com/d3/d3/blob/master/API.md)
+* [D3 examples](https://github.com/d3/d3/wiki/Gallery)
 ## Other D3 resources
-* (bl.ocks/mbostock)[https://bl.ocks.org/mbostock/]
-* (blockbuilder)[http://blockbuilder.org/]
+* [bl.ocks/mbostock](https://bl.ocks.org/mbostock/)
+* [blockbuilder](http://blockbuilder.org/)
 ## Visualization resources
-* (VisualisingData / Andy Kirk)[http://www.visualisingdata.com/resources/]
+* [VisualisingData / Andy Kirk](http://www.visualisingdata.com/resources/)
 ## Other resources
-* (Observable)[https://beta.observablehq.com/]
+* [Observable](https://beta.observablehq.com/)
