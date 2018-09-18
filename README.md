@@ -21,6 +21,7 @@ This is the starting point for the workshop. The final file, which has all comme
 * [D3 API reference](https://github.com/d3/d3/blob/master/API.md)
 * [D3 examples](https://github.com/d3/d3/wiki/Gallery)
 * [Thinking with joins](https://bost.ocks.org/mike/join/)
+* [General update pattern](https://github.com/d3/d3-selection#selection_data)
 ## Other D3 resources
 * [bl.ocks/mbostock](https://bl.ocks.org/mbostock/)
 * [blockbuilder](http://blockbuilder.org/)
