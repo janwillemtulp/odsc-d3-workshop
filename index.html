@@ -7,35 +7,48 @@
   <meta name="description" content="ODSC London - workshop introduction D3">
   <meta name="author" content="TULP interactive">
   <style>
+    /* referring to all div elements */
     div {
       font-size: 48px;
     }
+    /* referring to all elements that have 'my-text' as classname */
     .my-text {
       color: red;
     }
+    /* referring to alle elements that have 'unique' as id, usually just one element on your page */
     #unique {
       text-decoration: underline;
     }
+    /* referring to all text elements */
     text {
       fill: green;
-      text-anchor: middle;
+      text-anchor: middle; /* text horizontal alignment */
     }
   </style>
 </head>
 
 <body>
 
-  
+  <!-- importing the D3 library in your code -->
   <script src="js/d3.min.js" lang="Javascript"></script>
   <script lang="Javascript">
 
+  // the width and height of the SVG drawing area
   var width = 800
   var height = 400
     
+  // select a element named body, and then append an svg element to it, and set the width and height
+  // properties of that svg element, and storing the selection object created by D3, that refers to the
+  // svg element just created, in a variable call svg
   var svg = d3.select('body').append('svg')
     .attr('width', width)
     .attr('height', height)
 
+  // load an external data file
+  // first argument is the separator, in this case a comma, since we're loading an CSV file
+  // the second argument is the URL of the file, relative to this index.html file
+  // the third argument is a function that is executed for each row, and should return each row. You can 
+  // add additional properties if you like, or you you can coerce strings into numbers, etc.
   d3.dsv(',', 'people.csv' ,function(row) {
     return {
       name: row.name,
@@ -43,136 +56,136 @@
       height: +row.height,
       id: row.age + '_' + row.height
     }
-  }).then(function(data) {
+  }).then(function(data) { // then is executed once the data file is loaded, and the function you provide has a reference to the data
     console.log(data)
-    var x = d3.scaleLinear()
-      .domain(d3.extent(data, function(d) { return d.age}))
-      .range([100, 300])
+    var x = d3.scaleLinear() // creating a linear scale
+      .domain(d3.extent(data, function(d) { return d.age})) // extend finds the minimum and maximum of an array of numbers. The accessor function tells us it should use the age property
+      .range([100, 300]) // we set the range our ages should map to from 100 until 300
 
-    var y = d3.scaleLinear()
-      .domain(d3.extent(data, function(d) { return d.height}))
-      .range([height - 100, height - 200])
+    var y = d3.scaleLinear() // creating another linear scale
+      .domain(d3.extent(data, function(d) { return d.height})) // same as above, but now we use the height property
+      .range([height - 100, height - 200]) // we set the range to these values so that our domain is mapped to this range
 
-    var r = d3.scaleSqrt()
-      .domain(d3.extent(data, function(d) { return d.age}))
-      .range([10, 40])
+    var r = d3.scaleSqrt() // creating a scale that takes the Sqrt of the values of the domain
+      .domain(d3.extent(data, function(d) { return d.age})) // same as above, and again using the age property
+      .range([10, 40]) // the range of radii for our circles
 
-    var person = svg.selectAll('.person')
-      .data(data)
+    var person = svg.selectAll('.person') // selecting all elements that have person as classname. Initially this is an empty selection and storing the selection object created by D3 in a variable
+      .data(data) // joining our dataset to the selection. D3 will check for us which items in our dataset are new, updated or removed. Joining data means D3 keeps track of the connection between a DOM element and an item from your dataset
 
-    var personEnter = person.enter().append('g')
-      .attr('class', 'person')
-      .attr('transform', function(d) {
-        var xa = x(d.age)
-        var yh = y(d.height)
-        return 'translate(' + xa + ', ' + yh + ')'
+    var personEnter = person.enter().append('g') // the enter() function is executed for items that are new. In our case we then append a G element (a group element)
+      .attr('class', 'person') // we give it a class property person. Don't forget this, because this is what svg.selectAll('.person') refers to
+      .attr('transform', function(d) { // adding another attribute, called transoform
+        var xa = x(d.age) // map the age value for each new item in my dataset to the range defined by the x scale
+        var yh = y(d.height) // map the height value for each new item in my dataset to the range value defined by the y scale
+        return 'translate(' + xa + ', ' + yh + ')' // translate xa horizontally and yh vertically
       })
 
-    personEnter.append('circle')
-      .attr('r', function(d) {
-        return r(d.age)
+    personEnter.append('circle') // append a circle to the G element just created for new items. Notice that the cx and cy properties are 0 by default, so you don't have to set them explicitely for the circle, since we're transforming the G element it belongs to
+      .attr('r', function(d) { // set the radius property of the circle
+        return r(d.age) // map the age value to the range defined in the r scale
       })
 
-    personEnter.append('text')
-      .text(function(d) { return d.name })
-      .attr('dy', function(d) {
-        return -r(d.age) - 10
+    personEnter.append('text') // append a text to the G element just created
+      .text(function(d) { return d.name }) // set the inner text of the text element to the name property of the item in our dataset
+      .attr('dy', function(d) { // set the y offset of the text to prevent overlap with the circle
+        return -r(d.age) - 10 // offset upwards the same amount as the radius of the circle, plus 10 more pixels
       })
   })
-  // var data = d3.range(10)
-  //   .filter(function(d) { return d % 2 == 0 })
-  //   .map(function(d) {
-  //     return d * 2 * Math.random()
+  // var data = d3.range(10) // generate an array from 0 to 9, and store it in a variable called data
+  //   .filter(function(d) { return d % 2 == 0 }) // filter the array so that only the even number remain
+  //   .map(function(d) { 
+  //     return d * 2 * Math.random() // map each item from the filtered array so that we multiply each value with 2 and a random number
       
   //   })
 
-  // var x = d3.scaleLinear()
-  //   .domain(d3.extent(data))
-  //   .range([100, width / 2])
+  // var x = d3.scaleLinear() // create a linear scale to map values from the array to horizontal positions
+  //   .domain(d3.extent(data)) // set the domain of the scale to the minimum and maximum of the array
+  //   .range([100, width / 2]) // set the range to 100 (left edge) and half the width (right edge)
 
-  // var y = d3.scaleLinear()
-  //   .domain([0, data.length])
-  //   .range([height, 0])
+  // var y = d3.scaleLinear() // create another linear scale to map the index number of to vertical positions
+  //   .domain([0, data.length]) // set the domain to 0 and the number of items in the array
+  //   .range([height, 0]) // set the range to height (top) and 0 (bottom). Note that position 0,0 is the top left corner in SVG
   // console.log(data, x.domain())
 
-  // var line = d3.line()
-  //   .x(function(d) { return x(d) })
-  //   .y(function(d, i) { return y(i) })
-  //   .curve(d3.curveBasis)
+  // var line = d3.line() // create a line generator
+  //   .x(function(d) { return x(d) }) // the x position of a point in the line is determined by mapping the value from the data array to the range defined by the x scale
+  //   .y(function(d, i) { return y(i) }) // the y position of a point in the line is determined by mapping the value from the data array to the range defined by the y scale
+  //   .curve(d3.curveBasis) // make a smooth line, using the curveBasis interpolator. There are more, see the D3 API documentation.
 
-  // function render() {
-  //   var dot = svg.selectAll('.dot')
-  //     .data(data, function(d) { return d })
+  // function render() { // a separate render function so that you can call this multiple times
+  //   var dot = svg.selectAll('.dot') // select all elements that have dot as their classname
+  //     .data(data, function(d) { return d }) // join with the data array. The second argument is the identity function. D3 uses this function to determine how to identify items from the data array. By default this is on index number, but now we've provided an accessor, that looks at the actual value of the array.
 
-  //   var dotEnter = dot.enter().append('g')
-  //     .attr('class', 'dot')
-  //     .attr('transform', function(d, i){
-  //       var cx = x(d)
-  //       var cy = y(i)
-  //       return 'translate(' + cx + ', ' + cy + ')'
+  //   var dotEnter = dot.enter().append('g') // when new data is detected by D3, the enter() will be executed. In this case we append a G (group) element
+  //     .attr('class', 'dot') // adding the class property with the value dot
+  //     .attr('transform', function(d, i){ // adding a transform property to
+  //       var cx = x(d) // determine the x position by mapping the data value to the range defined by the x scale
+  //       var cy = y(i) // determine the y position by mapping the index number of the data item to the range defined by the y scale
+  //       return 'translate(' + cx + ', ' + cy + ')' // return a translation to the cx and cy position. Other options are to rotate or to scale (see SVG documentation)
   //     })
 
-  //   dotEnter.append('text')
-  //     .text(function(d) { return d })
-  //     .attr('dy', -20)
+  //   dotEnter.append('text') // appending a text to our newly created G element
+  //     .text(function(d) { return d }) // set the text value to the value of our data item
+  //     .attr('dy', -20) // set the offset in the y direction 20 pixels up
 
-  //   dotEnter.append('circle')
-  //     .attr('r', 5)
-  //     // .transition()
-  //     // .duration(1000)
-  //     // .attr('r', 10)
-  //     .on('mouseover', function(d, i) {
-  //       d3.select(this)
-  //         .transition()
-  //         .duration(1000)
-  //         .attr('r', 50)
-  //         .style('stroke', 'red')
-  //         .style('stroke-width', 5)
+  //   dotEnter.append('circle') // also append a circle to the G element
+  //     .attr('r', 5) // set the radius to 5
+  //     // .transition() // start a transition
+  //     // .duration(1000) // set the duration to 1 second
+  //     // .attr('r', 10) // this is the property to transition: make the radius grow until 10 pixels
+  //     .on('mouseover', function(d, i) { // when a mouseover is detected on the circle, execute this function
+  //       d3.select(this) // select the current element
+  //         .transition() // start a transition
+  //         .duration(1000) // set the duration to 1 second
+  //         .attr('r', 50) // animate the radius to 50 pixels
+  //         .style('stroke', 'red') // create a red stroke color
+  //         .style('stroke-width', 5) // animate the width of the strok to 5 pixels
   //     })
-  //     .on('mouseout', function(d, i) {
-  //       d3.select(this)
-  //         .transition()
-  //         .duration(1000)
-  //         .attr('r', 5)
-  //         .style('stroke', 'none')
+  //     .on('mouseout', function(d, i) { // when a mouseout is detected on the circle
+  //       d3.select(this) // select the current element
+  //         .transition() // start a transition
+  //         .duration(1000) // set the duration to 1 second
+  //         .attr('r', 5) // animate the radius back to 5 pixels
+  //         .style('stroke', 'none') // remove the stroke
   //     })
       
     
-  //   svg.append('path')
-  //     .attr('d', line(data))
-  //     .style('stroke', 'red')
-  //     .style('fill', 'none')
+  //   svg.append('path') // append path to our SVG. We'er not executing this for each individual item in our dataset, but for the entire dataset at once, because the dataset contains all the points of our line
+  //     .attr('d', line(data)) // set the d attribute, by calling the line generator we defined with our dataset
+  //     .style('stroke', 'red') // set the stroke color to red
+  //     .style('fill', 'none') // remove the fill (by default it has a black fill)
   //   console.log(line(data))
-  //   dot.exit()
-  //     .transition()
-  //     .duration(1500)
-  //     .delay(function(d, i) { return i * 500})
-  //     .style('opacity', 0)
-  //     .attr('cx', 600)
-  //     .remove()
+  //   dot.exit() // when D3 detects an item us removed, the exit() function will be executed
+  //     .transition() // start a transition
+  //     .duration(1500) // set the duration to 1.5 second
+  //     .delay(function(d, i) { return i * 500}) // set a delay depending on the index number of the item in the array
+  //     .style('opacity', 0) // animate the opacity to 0
+  //     .attr('cx', 600) // animate the x position of the circle to 600 pixels
+  //     .remove() // when the transition is done, remove the circle
   // }
 
-  // render()
-  // // data.splice(1, 2)
-  // // render()  
+  // render() // call the render function
+  // // data.splice(1, 2) // remove 2 elements from the array, starting at position 1
+  // // render() // call the render function again
 
 
 
 
 
-   // svg.append('text')
-  //   .text('Hello London!')
-  //   .attr('x', 100)
-  //   .attr('y', 200)
-  //   .style('font-size', '48px')
+   // svg.append('text') // append a text to the SVG element
+  //   .text('Hello London!') // set the inner text
+  //   .attr('x', 100) // set the x position
+  //   .attr('y', 200) // set the y position
+  //   .style('font-size', '48px') // set the font size
 
-  // svg.append('text')
-  //   .text('Hello London! 2')
-  //   .attr('x', 100)
-  //   .attr('y', 300)
-  //   .style('font-size', '48px')
+  // svg.append('text') // append another text
+  //   .text('Hello London! 2') // set the inner text
+  //   .attr('x', 100) // set the x position
+  //   .attr('y', 300) // set the y position
+  //   .style('font-size', '48px') // set the font size
 
-  // svg.select('text').remove()
+  // svg.select('text').remove() // select the first text element D3 encounters on the page and remove it.
 
   </script>
 </body>
