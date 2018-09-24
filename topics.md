@@ -138,6 +138,13 @@ var y = d3.scale.linear()
 # Shapes
 * explain `circle()`
 ```javascript
+line()
+  .attr('x1')
+  .attr('y1')
+  .attr('x2')
+  .attr('y2')
+```
+```javascript
 rect()
   .attr('x')
   .attr('y')

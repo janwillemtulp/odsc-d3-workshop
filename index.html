@@ -6,21 +6,174 @@
   <title>ODSC London - workshop introduction D3</title>
   <meta name="description" content="ODSC London - workshop introduction D3">
   <meta name="author" content="TULP interactive">
+  <style>
+    div {
+      font-size: 48px;
+    }
+    .my-text {
+      color: red;
+    }
+    #unique {
+      text-decoration: underline;
+    }
+    text {
+      fill: green;
+      text-anchor: middle;
+    }
+  </style>
 </head>
 
 <body>
-  <style>
 
-  </style>
-
+  
   <script src="js/d3.min.js" lang="Javascript"></script>
-
-  <svg width="800" height="800">
-    
-  </svg>
-
   <script lang="Javascript">
-    console.log('yes, it\'s working!')
+
+  var width = 800
+  var height = 400
+    
+  var svg = d3.select('body').append('svg')
+    .attr('width', width)
+    .attr('height', height)
+
+  d3.dsv(',', 'people.csv' ,function(row) {
+    return {
+      name: row.name,
+      age: +row.age,
+      height: +row.height,
+      id: row.age + '_' + row.height
+    }
+  }).then(function(data) {
+    console.log(data)
+    var x = d3.scaleLinear()
+      .domain(d3.extent(data, function(d) { return d.age}))
+      .range([100, 300])
+
+    var y = d3.scaleLinear()
+      .domain(d3.extent(data, function(d) { return d.height}))
+      .range([height - 100, height - 200])
+
+    var r = d3.scaleSqrt()
+      .domain(d3.extent(data, function(d) { return d.age}))
+      .range([10, 40])
+
+    var person = svg.selectAll('.person')
+      .data(data)
+
+    var personEnter = person.enter().append('g')
+      .attr('class', 'person')
+      .attr('transform', function(d) {
+        var xa = x(d.age)
+        var yh = y(d.height)
+        return 'translate(' + xa + ', ' + yh + ')'
+      })
+
+    personEnter.append('circle')
+      .attr('r', function(d) {
+        return r(d.age)
+      })
+
+    personEnter.append('text')
+      .text(function(d) { return d.name })
+      .attr('dy', function(d) {
+        return -r(d.age) - 10
+      })
+  })
+  // var data = d3.range(10)
+  //   .filter(function(d) { return d % 2 == 0 })
+  //   .map(function(d) {
+  //     return d * 2 * Math.random()
+      
+  //   })
+
+  // var x = d3.scaleLinear()
+  //   .domain(d3.extent(data))
+  //   .range([100, width / 2])
+
+  // var y = d3.scaleLinear()
+  //   .domain([0, data.length])
+  //   .range([height, 0])
+  // console.log(data, x.domain())
+
+  // var line = d3.line()
+  //   .x(function(d) { return x(d) })
+  //   .y(function(d, i) { return y(i) })
+  //   .curve(d3.curveBasis)
+
+  // function render() {
+  //   var dot = svg.selectAll('.dot')
+  //     .data(data, function(d) { return d })
+
+  //   var dotEnter = dot.enter().append('g')
+  //     .attr('class', 'dot')
+  //     .attr('transform', function(d, i){
+  //       var cx = x(d)
+  //       var cy = y(i)
+  //       return 'translate(' + cx + ', ' + cy + ')'
+  //     })
+
+  //   dotEnter.append('text')
+  //     .text(function(d) { return d })
+  //     .attr('dy', -20)
+
+  //   dotEnter.append('circle')
+  //     .attr('r', 5)
+  //     // .transition()
+  //     // .duration(1000)
+  //     // .attr('r', 10)
+  //     .on('mouseover', function(d, i) {
+  //       d3.select(this)
+  //         .transition()
+  //         .duration(1000)
+  //         .attr('r', 50)
+  //         .style('stroke', 'red')
+  //         .style('stroke-width', 5)
+  //     })
+  //     .on('mouseout', function(d, i) {
+  //       d3.select(this)
+  //         .transition()
+  //         .duration(1000)
+  //         .attr('r', 5)
+  //         .style('stroke', 'none')
+  //     })
+      
+    
+  //   svg.append('path')
+  //     .attr('d', line(data))
+  //     .style('stroke', 'red')
+  //     .style('fill', 'none')
+  //   console.log(line(data))
+  //   dot.exit()
+  //     .transition()
+  //     .duration(1500)
+  //     .delay(function(d, i) { return i * 500})
+  //     .style('opacity', 0)
+  //     .attr('cx', 600)
+  //     .remove()
+  // }
+
+  // render()
+  // // data.splice(1, 2)
+  // // render()  
+
+
+
+
+
+   // svg.append('text')
+  //   .text('Hello London!')
+  //   .attr('x', 100)
+  //   .attr('y', 200)
+  //   .style('font-size', '48px')
+
+  // svg.append('text')
+  //   .text('Hello London! 2')
+  //   .attr('x', 100)
+  //   .attr('y', 300)
+  //   .style('font-size', '48px')
+
+  // svg.select('text').remove()
+
   </script>
 </body>
 </html>
